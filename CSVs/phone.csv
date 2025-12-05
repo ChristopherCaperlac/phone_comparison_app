@@ -1,0 +1,30 @@
+companyname,modelname,rating,size,price,weight,batterycapacity,releaseyear,iprating,source
+Apple Inc,iPhone 17 Pro Max,4.4,6.9,1750,233,5088,2025,68,https://www.gsmarena.com/apple_iphone_17_pro_max-13964.php
+Apple Inc,IPhone 17,4.3,6.3,1128,177,3692,2025,68,https://www.gsmarena.com/apple_iphone_17-14050.php
+Apple Inc,iPhone 17 Pro,4.4,6.3,1550,206,4252,2025,68,https://www.gsmarena.com/apple_iphone_17_pro-14049.php
+Apple Inc,iPhone Air,4,6.5,960,165,3149,2025,68,https://www.gsmarena.com/apple_iphone_17_air-13502.php
+,,,,,,,,,
+Samsung,Samsung Galaxy S25 FE,4.2,6.7,650,190,4900,2025,68,https://www.gsmarena.com/samsung_galaxy_s25_fe_5g-14042.php
+Samsung,Samsung Galaxy A07 4G,3.5,6.7,145,184,5000,2025,54,https://www.gsmarena.com/samsung_galaxy_a07-14066.php
+Samsung,Samsung Galaxy A17,3.4,6.7,203,192,5000,2025,54,https://www.gsmarena.com/samsung_galaxy_a17_5g-14041.php
+Samsung,Samsung Galaxy S25 Edge,4.2,6.7,540,163,3900,2025,68,https://www.gsmarena.com/samsung_galaxy_s25_edge-13506.php
+,,,,,,,,,
+Sony,Sony Xperia 10 VII,3.9,6.1,522,168,5000,2025,68,https://www.gsmarena.com/sony_xperia_10_vii_5g-14137.php
+Sony,Sony Xperia 1 VII,4.3,6.5,1633,197,5000,2025,68,https://www.gsmarena.com/sony_xperia_1_vii_5g-13843.php
+Sony,Sony Xperia 1 VII,4.5,6.5,1796,192,5000,2025,68,https://www.gsmarena.com/sony_xperia_1_vi-13003.php
+Sony,Sony Xperia 10 VI,,6.1,600,164,5000,2024,68,https://www.gsmarena.com/sony_xperia_10_vi-13002.php
+,,,,,,,,,
+Motorola,Motorola Moto G Power,3.7,6.8,170,208,5000,2025,69,https://www.gsmarena.com/motorola_moto_g_power_(2025)-13623.php
+Motorola,Motorola Edge 50 Fusion,4,6.7,289,174.9,5000,2024,68,https://www.gsmarena.com/motorola_edge_50_fusion-12871.php
+Motorola,Motorola Edge 50 Pro,4.1,6.7,399,186,4500,2024,68,https://www.gsmarena.com/motorola_edge_50_pro-12909.php
+Motorola,Motorola Moto G84,,6.5,455,166.8,5000,2023,54,https://www.gsmarena.com/motorola_moto_g84-12526.php
+,,,,,,,,,
+Google,Google Pixel 10 Pro XL,4.4,6.8,1000,232,5200,2025,68,https://www.gsmarena.com/google_pixel_10_pro_xl_5g-13988.php
+Google,Google Pixel 10 Pro,4.4,6.3,1219,207,4870,2025,68,https://www.gsmarena.com/google_pixel_10_pro_5g-13987.php
+Google,Google Pixel 10,4.1,6.3,715,204,4970,2025,68,https://www.gsmarena.com/google_pixel_10_5g-13979.php
+Google,Google Pixel 9a,4,6.3,490,186,5100,2025,68,https://www.gsmarena.com/google_pixel_9a-13478.php
+,,,,,,,,,
+Nothing,Nothing Phone (1),4.3,6.55,700,193.5,4500,2022,53,https://www.gsmarena.com/nothing_phone_(1)-11636.php
+Nothing,Nothing Phone (2a),4.2,6.7,399,190,5000,2024,54,https://www.gsmarena.com/nothing_phone_(2a)-12760.php
+Nothing,Nothing Phone (2),4.4,6.7,650,201.2,4700,2023,54,https://www.gsmarena.com/nothing_phone_(2)-12386.php
+Nothing,Nothing Phone (3a),4.1,6.77,470,201,5000,2025,64,https://www.gsmarena.com/nothing_phone_(3a)-13672.php
