@@ -1,8 +1,11 @@
 import psycopg
 from psycopg.rows import dict_row
 
+# REPLACE CONFIG WITH YOUR INFORMATION
+config = "dbname=phone_app user=user"
+
 class Database:
-    def __init__(self, config=""):
+    def __init__(self):
         self.connection=None
         try:
             self.connection = psycopg.connect(config)
@@ -27,3 +30,8 @@ class Database:
             self.connection.commit()
             if fetch:
                 return cursor.fetchall()
+            
+    def fetchCompanies(self):
+        users = self.query(query="SELECT * FROM company LIMIT 5", fetch=True)
+        print(users)
+        return users

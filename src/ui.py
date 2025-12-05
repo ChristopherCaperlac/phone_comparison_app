@@ -13,6 +13,8 @@ from PySide6.QtWidgets import (
     QWidget
 )
 
+from database import Database
+
 
 class InfoWindow(QWidget):
     def __init__(self):
@@ -30,8 +32,9 @@ class TableModel(QtCore.QAbstractTableModel):
     
     def data(self, index, role):
         if role == Qt.DisplayRole:
-            # .row() indexes into the outer list, .column() indexes into the sub-list
-            return self._data[index.row()][index.column()]
+            row_dict = self._data[index.row()]
+            row_values = list(row_dict.values())
+            return row_values[index.column()]
 
     def rowCount(self, index):
         # The length of the outer list.
@@ -61,13 +64,8 @@ class MainWindow(QMainWindow):
 
         #add table!!!!
         self.table = QTableView()
-        data = [
-          [4, 9, 2],
-          [1, 'hello', 0],
-          [3.1415, 5, 0],
-          [3, 3, 2],
-          [7, -8, 9],
-        ]
+        database = Database()
+        data = database.fetchCompanies()
         self.model = TableModel(data)
         self.table.setModel(self.model)
 
