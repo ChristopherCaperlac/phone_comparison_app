@@ -1,52 +1,103 @@
+from decimal import Decimal
 import sys
 from PySide6 import QtCore
-from PySide6.QtCore import QSize, Qt
+from PySide6.QtCore import QSize, Qt, QModelIndex
 from PySide6.QtWidgets import (
-    QApplication, 
+    QApplication,
     QMainWindow, 
     QLabel,
     QPushButton,
     QVBoxLayout,
     QHBoxLayout,
     QTableView,
-    QWidget
+    QWidget,
+    QAbstractScrollArea,
 )
 from database import Database
 
-class InfoWindow(QWidget):
-    def __init__(self):
+class ChipWindow(QWidget):
+    def __init__(self, chipName):
         super().__init__()
-        self.setWindowTitle("!!!!put name of phone here")
+        query = f"SELECT * FROM chip WHERE modelname = '{chipName}'"
+        phoneChip = database.query(query, fetch=True)[0]
+        print("Phone Details: ", phoneChip)
+        self.setWindowTitle(phoneChip["modelname"])
         layout = QVBoxLayout()
-        self.Label = QLabel("detailed info goes here")
-        layout.addWidget(self.Label)
+        for key, value in phoneChip.items():
+            if isinstance(value, int) or isinstance(value, Decimal):
+                value = str(value)
+            if isinstance(value, list):
+                value = "IP" + "".join(str(x) for x in value)
+            layout.addWidget(QLabel(f"{key}: {value}"))
         self.setLayout(layout)
+
+class PhoneWindow(QWidget):
+    def __init__(self, phoneName):
+        super().__init__()
+        query = f"SELECT * FROM phonemodel WHERE modelname = '{phoneName}'"
+        phone = database.query(query, fetch=True)[0]
+        print("Phone Details: ", phone)
+        self.setWindowTitle(phone["modelname"])
+        layout = QVBoxLayout()
+        for key, value in phone.items():
+            if isinstance(value, int) or isinstance(value, Decimal):
+                value = str(value)
+            if isinstance(value, list):
+                value = "IP" + "".join(str(x) for x in value)
+            layout.addWidget(QLabel(f"{key}: {value}"))
+        query = f"SELECT c_modelname FROM contains WHERE p_modelname = '{phoneName}' LIMIT 1"
+        phoneChip = database.query(query, fetch=True)[0]
+        chipButton = QPushButton(f"Chip: {phoneChip["c_modelname"]}")
+        chipButton.clicked.connect(lambda checked, chipName=phoneChip["c_modelname"]: self.showChipWindow(chipName))
+        layout.addWidget(chipButton)
+        self.setLayout(layout)
+    
+    def showChipWindow(self, chipName):
+        self.w = ChipWindow(chipName)
+        self.w.setFixedSize(QSize(500,500))
+        self.w.show()
 
 class TableModel(QtCore.QAbstractTableModel):
     def __init__(self, data):
         super().__init__()
+        # Data is in the format List[Dict[str,any]]
+        # Each Dict is a row that follows the format {"columnName": "columnValue", ...} for each column in sql table
         self._data = data
+        self.columnNames = list(self._data[0].keys())
     
+    def rowCount(self, parent=QModelIndex()):
+        return len(self._data)
+
+    def columnCount(self, parent=QModelIndex()):
+        return len(self._data[0])
+
     def data(self, index, role):
         if role == Qt.DisplayRole:
             row_dict = self._data[index.row()]
             row_values = list(row_dict.values())
-            return row_values[index.column()]
+            data = row_values[index.column()]
+            if isinstance(data, Decimal):
+                data = str(data)
+            if isinstance(data, list):
+                data = "IP" + "".join(str(x) for x in data)
+            return data
 		
     def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
-        columnNames = ["Company", "Model", "Price"]
         if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
-            return columnNames[section]
+            return self.columnNames[section]
         return super().headerData(section, orientation, role)
+    
+    def sort(self, column: int, order: Qt.SortOrder):
+        self.layoutAboutToBeChanged.emit()
 
-    def rowCount(self, index):
-        # The length of the outer list.
-        return len(self._data)
+        if order == Qt.AscendingOrder:
+            query = "SELECT modelname, rating, price FROM phonemodel ORDER BY " + self.columnNames[column] + " ASC"
+            self._data = database.query(query, fetch=True)
+        else:
+            query = "SELECT modelname, rating, price FROM phonemodel ORDER BY " + self.columnNames[column] + " DESC"
+            self._data = database.query(query, fetch=True)
 
-    def columnCount(self, index):
-        # The following takes the first sub-list, and returns
-        # the length (only works if all rows are an equal length)
-        return len(self._data[0])
+        self.layoutChanged.emit()
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -55,47 +106,39 @@ class MainWindow(QMainWindow):
         mainLayout = QHBoxLayout()
         mainLayout.setContentsMargins(10,10,10,10)
 
-        #add filters section
-        filtersLayout = QVBoxLayout()
-        filtersLabel = QLabel()
-        filtersLabel.setText("<h3>Filters</h3>")
-        fl1 = QLabel("option 1")
-        fl2 = QLabel("option 2")
-        filtersLayout.addWidget(filtersLabel)
-        filtersLayout.addWidget(fl1)
-        filtersLayout.addWidget(fl2)
-
         #add table!!
-        self.table = QTableView()
-        database = Database()
-        data = database.fetchCompanies()
+        self.table = QTableView(sortingEnabled=True)
+        data = database.fetchPhones(simplified=True)
         self.model = TableModel(data)
         self.table.setModel(self.model)
+        self.table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
-        #add test button for opening new windows!!!!!!!
-        infoLayout = QVBoxLayout()
-        self.button = QPushButton("test")
-        self.button.clicked.connect(self.showInfoWindow)
-        self.button2 = QPushButton("test2")
-        self.button2.clicked.connect(self.showInfoWindow)
-        infoLayout.addWidget(self.button)
-        infoLayout.addWidget(self.button2)
+        self.setButtons()
+        self.model.layoutChanged.connect(self.setButtons)
 
-        #add elements to the main structure
-        mainLayout.addLayout(filtersLayout)
         mainLayout.addWidget(self.table)
-        mainLayout.addLayout(infoLayout)
 
         #set hbox as main layout
         mainWidget = QWidget()
         mainWidget.setLayout(mainLayout)
         self.setCentralWidget(mainWidget)
     
-    def showInfoWindow(self):
-        self.w = InfoWindow()
+    def showPhoneWindow(self, phoneName):
+        self.w = PhoneWindow(phoneName)
         self.w.setFixedSize(QSize(500,500))
         self.w.show()
 
+    def setButtons(self):
+        for rowIndex in range(self.model.rowCount()):
+
+            firstCellOfRow = self.model.index(rowIndex, 0)
+            data = self.model.data(firstCellOfRow, Qt.DisplayRole)
+
+            button = QPushButton(data)
+            button.clicked.connect(lambda checked, phoneName=data: self.showPhoneWindow(phoneName))
+            self.table.setIndexWidget(firstCellOfRow, button)
+
+database = Database()
 app = QApplication(sys.argv)
 window = MainWindow()
 window.show()

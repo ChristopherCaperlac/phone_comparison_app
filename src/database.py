@@ -31,7 +31,9 @@ class Database:
             if fetch:
                 return cursor.fetchall()
             
-    def fetchCompanies(self):
-        users = self.query(query="SELECT * FROM company LIMIT 5", fetch=True)
-        print(users)
-        return users
+    def fetchPhones(self, simplified=False, limit=100):
+        if simplified:
+            phones = self.query(query="SELECT modelname, rating, price FROM phonemodel", fetch=True)
+        else:
+            phones = self.query(query="SELECT * FROM phonemodel", fetch=True)
+        return phones
