@@ -1,5 +1,5 @@
 import sys
-from PySide6 import QtCore, QtGui
+from PySide6 import QtCore
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import (
     QApplication, 
@@ -8,13 +8,10 @@ from PySide6.QtWidgets import (
     QPushButton,
     QVBoxLayout,
     QHBoxLayout,
-    QGridLayout,
     QTableView,
     QWidget
 )
-
 from database import Database
-
 
 class InfoWindow(QWidget):
     def __init__(self):
@@ -35,6 +32,12 @@ class TableModel(QtCore.QAbstractTableModel):
             row_dict = self._data[index.row()]
             row_values = list(row_dict.values())
             return row_values[index.column()]
+		
+    def headerData(self, section, orientation, role=QtCore.Qt.DisplayRole):
+        columnNames = ["Company", "Model", "Price"]
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+            return columnNames[section]
+        return super().headerData(section, orientation, role)
 
     def rowCount(self, index):
         # The length of the outer list.
@@ -49,27 +52,27 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Phone Comparison App")
-        self.setFixedSize(QSize(700,700))
         mainLayout = QHBoxLayout()
         mainLayout.setContentsMargins(10,10,10,10)
 
         #add filters section
         filtersLayout = QVBoxLayout()
-        filtersLabel = QLabel("Filters")
+        filtersLabel = QLabel()
+        filtersLabel.setText("<h3>Filters</h3>")
         fl1 = QLabel("option 1")
         fl2 = QLabel("option 2")
         filtersLayout.addWidget(filtersLabel)
         filtersLayout.addWidget(fl1)
         filtersLayout.addWidget(fl2)
 
-        #add table!!!!
+        #add table!!
         self.table = QTableView()
         database = Database()
         data = database.fetchCompanies()
         self.model = TableModel(data)
         self.table.setModel(self.model)
 
-        #add test button for opening new windows
+        #add test button for opening new windows!!!!!!!
         infoLayout = QVBoxLayout()
         self.button = QPushButton("test")
         self.button.clicked.connect(self.showInfoWindow)
